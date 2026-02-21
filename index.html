@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>חדשות בעברית</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root { --primary: #007AFF; --bg: #f2f2f7; --card: #ffffff; --accent: #FF9500; }
+        body { background-color: var(--bg); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; direction: rtl; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 32px; color: var(--primary); margin: 0; }
+        .lang-selector { text-align: center; margin-bottom: 20px; }
+        select { padding: 8px; border-radius: 10px; border: 1px solid #ccc; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .headline { font-size: 19px; font-weight: 700; margin-bottom: 15px; color: #000; }
+        .actions { display: flex; gap: 8px; }
+        button { flex: 1; border: none; border-radius: 12px; padding: 12px 5px; font-weight: 600; cursor: pointer; }
+        .btn-speak { background: #E5F1FF; color: var(--primary); }
+        .btn-trans { background: #34C759; color: white; }
+        .btn-save { background: var(--accent); color: white; }
+        #vocab-list { margin-top: 30px; }
+        .vocab-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; border-right: 4px solid var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>חדשות בעברית</h1></div>
+    <div class="lang-selector">
+        <select id="langSelect" onchange="changeLang()">
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="am">አማርኛ</option>
+        </select>
+    </div>
+    <div id="news-container"></div>
+    <div id="my-vocabulary"><h3 id="vocab-title">⭐ Мой словарь</h3><div id="vocab-list"></div></div>
+
+    <script>
+        const translations = {
+            ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь" },
+            en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary" },
+            fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico" },
+            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት" }
+        };
+
+        let currentLang = localStorage.getItem('funLang') || 'ru';
+        document.getElementById('langSelect').value = currentLang;
+
+        function changeLang() {
+            currentLang = document.getElementById('langSelect').value;
+            localStorage.setItem('funLang', currentLang);
+            fetchNews();
+            renderVocab();
+        }
+
+        async function fetchNews() {
+            try {
+                const RSS_URL = 'https://www.ynet.co.il/Integration/StoryRss2.xml';
+                // ИСПРАВЛЕНО: Обратные кавычки для API_URL
+                const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                const container = document.getElementById('news-container');
+                container.innerHTML = '';
+                data.items.slice(0, 5).forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="headline" id="head-${index}">${item.title}</div>
+                        <div class="actions">
+                            <button class="btn-speak" onclick="speakFromId('head-${index}')">${translations[currentLang].speak}</button>
+                            <button class="btn-trans" onclick="translateFromId('head-${index}')">${translations[currentTarget = currentLang].trans}</button>
+                            <button class="btn-save" onclick="saveWord(${index})">${translations[currentLang].save}</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        function speakText(text) {
+            window.speechSynthesis.cancel();
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'he-IL';
+            window.speechSynthesis.speak(ut);
+        }
+        function speakFromId(id) { speakText(document.getElementById(id).innerText); }
+        
+        function translateText(text) {
+            // ИСПРАВЛЕНО: Добавлен протокол https://
+            window.open(`https://translate.google.com/?sl=iw&tl=${currentLang}&text=${encodeURIComponent(text)}&op=translate`, '_blank');
+        }
+        function translateFromId(id) { translateText(document.getElementById(id).innerText); }
+
+        function saveWord(id) {
+            const text = document.getElementById('head-' + id).innerText;
+            let words = JSON.parse(localStorage.getItem('funHebrewWords') || '[]');
+            if (!words.includes(text)) {
+                words.push(text);
+                localStorage.setItem('funHebrewWords', JSON.stringify(words));
+                renderVocab();
+            }
+        }
+
+        function renderVocab() {
+            document.getElementById('vocab-title').innerText = translations[currentLang].vocab;
+            const list = document.getElementById('vocab-list');
+            const words = JSON.parse(localStorage.getItem('funHebrewWords') || '[]');
+            list.innerHTML = words.length ? '' : '...';
+            words.slice().reverse().forEach((word, index) => {
+                const actualIndex = words.length - 1 - index;
+                const div = document.createElement('div');
+                div.className = 'vocab-item';
+                const safeWord = word.replace(/'/g, "\\'");
+                div.innerHTML = `
+                    <div onclick="speakText('${safeWord}')" style="cursor:pointer;flex:1">${word}</div>
+                    <button onclick="deleteWord(${actualIndex})" style="background:none;color:red;width:30px">✕</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function deleteWord(index) {
+            let words = JSON.parse(localStorage.getItem('funHebrewWords') || '[]');
+            words.splice(index, 1);
+            localStorage.setItem('funHebrewWords', JSON.stringify(words));
+            renderVocab();
+        }
+
+        fetchNews();
+        renderVocab();
+    </script>
+</body>
+</html>
