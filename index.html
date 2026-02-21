@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>חדשות בעברית</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <link rel="apple-touch-icon" href="icon.png">
+    
+    <title>FunHebrew</title>
     <link rel="manifest" href="manifest.json">
     <style>
         :root { --primary: #007AFF; --bg: #f2f2f7; --card: #ffffff; --accent: #FF9500; }
@@ -12,7 +16,7 @@
         .header { text-align: center; margin-bottom: 20px; }
         .header h1 { font-size: 32px; color: var(--primary); margin: 0; }
         .lang-selector { text-align: center; margin-bottom: 20px; }
-        select { padding: 8px; border-radius: 10px; border: 1px solid #ccc; }
+        select { padding: 8px; border-radius: 10px; border: 1px solid #ccc; font-size: 16px; }
         .card { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .headline { font-size: 19px; font-weight: 700; margin-bottom: 15px; color: #000; }
         .actions { display: flex; gap: 8px; }
@@ -20,8 +24,9 @@
         .btn-speak { background: #E5F1FF; color: var(--primary); }
         .btn-trans { background: #34C759; color: white; }
         .btn-save { background: var(--accent); color: white; }
-        #vocab-list { margin-top: 30px; }
-        .vocab-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; border-right: 4px solid var(--accent); }
+        #my-vocabulary { margin-top: 30px; }
+        .vocab-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; border-right: 4px solid var(--accent); align-items: center; }
+        .btn-del { background: none; color: #FF3B30; font-size: 18px; width: 40px; }
     </style>
 </head>
 <body>
@@ -58,7 +63,6 @@
         async function fetchNews() {
             try {
                 const RSS_URL = 'https://www.ynet.co.il/Integration/StoryRss2.xml';
-                // ИСПРАВЛЕНО: Обратные кавычки для API_URL
                 const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
                 const response = await fetch(API_URL);
                 const data = await response.json();
@@ -71,7 +75,7 @@
                         <div class="headline" id="head-${index}">${item.title}</div>
                         <div class="actions">
                             <button class="btn-speak" onclick="speakFromId('head-${index}')">${translations[currentLang].speak}</button>
-                            <button class="btn-trans" onclick="translateFromId('head-${index}')">${translations[currentTarget = currentLang].trans}</button>
+                            <button class="btn-trans" onclick="translateFromId('head-${index}')">${translations[currentLang].trans}</button>
                             <button class="btn-save" onclick="saveWord(${index})">${translations[currentLang].save}</button>
                         </div>
                     `;
@@ -88,11 +92,10 @@
         }
         function speakFromId(id) { speakText(document.getElementById(id).innerText); }
         
-        function translateText(text) {
-            // ИСПРАВЛЕНО: Добавлен протокол https://
-            window.open(`https://translate.google.com/?sl=iw&tl=${currentLang}&text=${encodeURIComponent(text)}&op=translate`, '_blank');
+        function translateFromId(id) { 
+            const text = document.getElementById(id).innerText;
+            window.open(`https://translate.google.com/?sl=iw&tl=${currentLang}&text=${encodeURIComponent(text)}&op=translate`, '_blank'); 
         }
-        function translateFromId(id) { translateText(document.getElementById(id).innerText); }
 
         function saveWord(id) {
             const text = document.getElementById('head-' + id).innerText;
@@ -116,7 +119,7 @@
                 const safeWord = word.replace(/'/g, "\\'");
                 div.innerHTML = `
                     <div onclick="speakText('${safeWord}')" style="cursor:pointer;flex:1">${word}</div>
-                    <button onclick="deleteWord(${actualIndex})" style="background:none;color:red;width:30px">✕</button>
+                    <button class="btn-del" onclick="deleteWord(${actualIndex})">✕</button>
                 `;
                 list.appendChild(div);
             });
