@@ -18,30 +18,41 @@
         
         body { 
             background-color: var(--bg); 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
             margin: 0; padding: 15px; direction: rtl; color: var(--text-dark);
             display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* Увеличенный выбор языка сверху */
-        .lang-selector { 
-            text-align: center; 
-            margin-bottom: 15px; 
-            padding-top: 10px;
+        /* Шапка с названием и выбором языка */
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Выравнивание по правому краю (в RTL) */
+            margin-bottom: 25px;
+            padding: 10px 5px;
         }
+
+        .header-container h1 { 
+            font-size: 28px; /* Увеличили до 28 */
+            color: var(--il-blue); 
+            margin: 0 0 8px 0; 
+            font-weight: 800;
+        }
+
+        /* Компактный выбор языка в правом нижнем углу шапки */
         select { 
-            padding: 12px 20px; 
-            border-radius: 12px; 
-            border: 2px solid var(--il-blue); 
-            font-size: 16px; 
+            padding: 6px 10px; 
+            border-radius: 8px; 
+            border: 1.5px solid var(--il-blue); 
+            font-size: 14px; 
             font-weight: 600;
             background: var(--il-white);
             color: var(--il-blue);
-            width: 80%;
-            max-width: 140px;
+            /* Размер 3/4 от кнопок действий (которые обычно ~100-120px) */
+            width: 90px; 
+            cursor: pointer;
+            outline: none;
         }
-
-        .header h1 { text-align: center; font-size: 24px; color: var(--il-blue); margin: 10px 0 20px 0; }
 
         .card { 
             background: var(--il-white); border-radius: 16px; padding: 20px; 
@@ -49,7 +60,7 @@
             border: 1px solid rgba(0, 56, 168, 0.1);
         }
 
-        .headline { font-size: 18px; line-height: 1.5; font-weight: 700; margin-bottom: 18px; }
+        .headline { font-size: 18px; line-height: 1.5; font-weight: 700; margin-bottom: 18px; text-align: right; }
 
         .actions { display: flex; gap: 8px; }
         button { 
@@ -57,33 +68,38 @@
             padding: 12px 4px; font-size: 13px; font-weight: 700; cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
         }
+        button:active { transform: scale(0.96); }
 
         .btn-speak { background: var(--il-white); color: var(--il-blue); }
         .btn-trans { background: var(--il-blue); color: var(--il-white); }
-        .btn-save { background: var(--il-white); color: var(--il-blue); }
+        .btn-save { background: var(--il-white); color: var(--il-blue); border-style: solid; }
 
         #my-vocabulary { flex-grow: 1; margin-top: 30px; }
+        #vocab-title { color: var(--il-blue); text-align: right; margin-bottom: 15px; font-size: 20px; }
+        
         .vocab-item { 
             background: var(--il-white); padding: 15px; border-radius: 12px; 
             margin-bottom: 10px; display: flex; justify-content: space-between; 
             border-right: 5px solid var(--il-blue);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        .btn-del { border: none; color: #ff3b30; background: none; font-size: 18px; }
+        .btn-del { border: none; color: #ff3b30; background: none; font-size: 18px; flex: none; width: auto; }
 
-        /* Кнопка Поделиться и Футер */
         .share-section { text-align: center; margin-top: 30px; }
         .btn-share { 
             background: var(--il-blue); color: white; border: none; 
             padding: 15px 30px; border-radius: 25px; font-size: 16px; 
             width: auto; margin: 0 auto; display: inline-flex;
         }
-        .footer { text-align: center; padding: 25px 0; color: #8e8e93; font-size: 14px; }
+
+        .footer { text-align: center; padding: 25px 0; color: #8e8e93; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="lang-selector">
+    <div class="header-container">
+        <h1>חדשות בעברית</h1>
         <select id="langSelect" onchange="changeLang()">
             <option value="ru">Русский</option>
             <option value="en">English</option>
@@ -92,12 +108,10 @@
         </select>
     </div>
 
-    <div class="header"><h1>חדשות בעברית</h1></div>
-
     <div id="news-container"></div>
 
     <div id="my-vocabulary">
-        <h3 id="vocab-title" style="color: var(--il-blue); text-align: center;">⭐ Мой словарь</h3>
+        <h3 id="vocab-title">⭐ Мой словарь</h3>
         <div id="vocab-list"></div>
     </div>
 
@@ -111,10 +125,10 @@
 
     <script>
         const translations = {
-            ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь", share: "🔗 Поделиться" },
-            en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary", share: "🔗 Share" },
-            fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico", share: "🔗 Partager" },
-            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት", share: "🔗 አጋራ" }
+            ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь", share: "🔗 Поделиться", empty: "Список пуст" },
+            en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary", share: "🔗 Share", empty: "List is empty" },
+            fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico", share: "🔗 Partager", empty: "Liste vide" },
+            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት", share: "🔗 አጋራ", empty: "ዝርዝሩ ባዶ ነው" }
         };
 
         let currentLang = localStorage.getItem('funLang') || 'ru';
@@ -179,14 +193,14 @@
             document.querySelector('.btn-share').innerText = translations[currentLang].share;
             const list = document.getElementById('vocab-list');
             const words = JSON.parse(localStorage.getItem('funHebrewWords') || '[]');
-            list.innerHTML = words.length ? '' : '<p style="text-align:center; color:#999">Список пуст</p>';
+            list.innerHTML = words.length ? '' : `<p style="text-align:center; color:#999">${translations[currentLang].empty}</p>`;
             words.slice().reverse().forEach((word, index) => {
                 const actualIndex = words.length - 1 - index;
                 const div = document.createElement('div');
                 div.className = 'vocab-item';
                 const safeWord = word.replace(/'/g, "\\'");
                 div.innerHTML = `
-                    <div onclick="speakText('${safeWord}')" style="cursor:pointer;flex:1;font-weight:600">${word}</div>
+                    <div onclick="speakText('${safeWord}')" style="cursor:pointer;flex:1;font-weight:600;text-align:right;">${word}</div>
                     <button class="btn-del" onclick="deleteWord(${actualIndex})">✕</button>
                 `;
                 list.appendChild(div);
