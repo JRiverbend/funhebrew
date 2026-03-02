@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    
     <link rel="apple-touch-icon" href="icon.png">
-    
     <title>FunHebrew</title>
     <link rel="manifest" href="manifest.json">
     <style>
         :root { 
-            --il-blue: #0038A8; /* Тот самый синий флаг */
+            --il-blue: #0038A8; 
             --il-white: #ffffff;
             --bg: #f8f9fa; 
             --text-dark: #1c1c1e;
@@ -20,96 +18,71 @@
         
         body { 
             background-color: var(--bg); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
-            margin: 0; 
-            padding: 15px; 
-            direction: rtl; 
-            color: var(--text-dark);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            margin: 0; padding: 15px; direction: rtl; color: var(--text-dark);
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        .header h1 { 
+        /* Увеличенный выбор языка сверху */
+        .lang-selector { 
             text-align: center; 
-            font-size: 26px; 
-            color: var(--il-blue); 
-            margin: 20px 0;
+            margin-bottom: 15px; 
+            padding-top: 10px;
         }
+        select { 
+            padding: 12px 20px; 
+            border-radius: 12px; 
+            border: 2px solid var(--il-blue); 
+            font-size: 18px; 
+            font-weight: 600;
+            background: var(--il-white);
+            color: var(--il-blue);
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .header h1 { text-align: center; font-size: 24px; color: var(--il-blue); margin: 10px 0 20px 0; }
 
         .card { 
-            background: var(--il-white); 
-            border-radius: 16px; 
-            padding: 20px; 
-            box-shadow: 0 4px 12px rgba(0, 56, 168, 0.08); 
-            margin-bottom: 16px; 
+            background: var(--il-white); border-radius: 16px; padding: 20px; 
+            box-shadow: 0 4px 12px rgba(0, 56, 168, 0.08); margin-bottom: 16px; 
             border: 1px solid rgba(0, 56, 168, 0.1);
         }
 
-        .headline { 
-            font-size: 18px; 
-            line-height: 1.5; 
-            font-weight: 700; 
-            margin-bottom: 18px; 
-        }
+        .headline { font-size: 18px; line-height: 1.5; font-weight: 700; margin-bottom: 18px; }
 
-        .actions { 
-            display: flex; 
-            gap: 8px; 
-        }
-
+        .actions { display: flex; gap: 8px; }
         button { 
-            flex: 1; 
-            border: 2px solid var(--il-blue); 
-            border-radius: 12px; 
-            padding: 12px 4px; 
-            font-size: 13px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            flex: 1; border: 2px solid var(--il-blue); border-radius: 12px; 
+            padding: 12px 4px; font-size: 13px; font-weight: 700; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
         }
 
-        button:active { transform: scale(0.96); }
-
-        .btn-speak { background-color: var(--il-white); color: var(--il-blue); }
-        .btn-trans { background-color: var(--il-blue); color: var(--il-white); }
-        
-        /* Кнопка сохранить теперь со сплошной рамкой */
-        .btn-save { 
-            background-color: var(--il-white); 
-            color: var(--il-blue); 
-            border-style: solid; 
-        }
+        .btn-speak { background: var(--il-white); color: var(--il-blue); }
+        .btn-trans { background: var(--il-blue); color: var(--il-white); }
+        .btn-save { background: var(--il-white); color: var(--il-blue); }
 
         #my-vocabulary { flex-grow: 1; margin-top: 30px; }
-        
         .vocab-item { 
-            background: var(--il-white); 
-            padding: 15px; 
-            border-radius: 12px; 
-            margin-bottom: 10px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
+            background: var(--il-white); padding: 15px; border-radius: 12px; 
+            margin-bottom: 10px; display: flex; justify-content: space-between; 
             border-right: 5px solid var(--il-blue);
         }
 
         .btn-del { border: none; color: #ff3b30; background: none; font-size: 18px; }
 
-        /* Подпись внизу */
-        .footer {
-            text-align: center;
-            padding: 30px 0 20px 0;
-            color: #8e8e93;
-            font-size: 14px;
+        /* Кнопка Поделиться и Футер */
+        .share-section { text-align: center; margin-top: 30px; }
+        .btn-share { 
+            background: var(--il-blue); color: white; border: none; 
+            padding: 15px 30px; border-radius: 25px; font-size: 16px; 
+            width: auto; margin: 0 auto; display: inline-flex;
         }
+        .footer { text-align: center; padding: 25px 0; color: #8e8e93; font-size: 14px; }
     </style>
 </head>
 <body>
-    <div class="header"><h1>חדשות בעברית</h1></div>
+
     <div class="lang-selector">
         <select id="langSelect" onchange="changeLang()">
             <option value="ru">Русский</option>
@@ -118,15 +91,30 @@
             <option value="am">አማርኛ</option>
         </select>
     </div>
+
+    <div class="header"><h1>חדשות בעברית</h1></div>
+
     <div id="news-container"></div>
-    <div id="my-vocabulary"><h3 id="vocab-title">⭐ Мой словарь</h3><div id="vocab-list"></div></div>
+
+    <div id="my-vocabulary">
+        <h3 id="vocab-title" style="color: var(--il-blue); text-align: center;">⭐ Мой словарь</h3>
+        <div id="vocab-list"></div>
+    </div>
+
+    <div class="share-section">
+        <button class="btn-share" onclick="shareApp()">🔗 Поделиться приложением</button>
+    </div>
+
+    <div class="footer">
+        Made with ❤️ in Israel
+    </div>
 
     <script>
         const translations = {
-            ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь" },
-            en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary" },
-            fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico" },
-            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት" }
+            ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь", share: "🔗 Поделиться" },
+            en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary", share: "🔗 Share" },
+            fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico", share: "🔗 Partager" },
+            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት", share: "🔗 አጋራ" }
         };
 
         let currentLang = localStorage.getItem('funLang') || 'ru';
@@ -188,16 +176,17 @@
 
         function renderVocab() {
             document.getElementById('vocab-title').innerText = translations[currentLang].vocab;
+            document.querySelector('.btn-share').innerText = translations[currentLang].share;
             const list = document.getElementById('vocab-list');
             const words = JSON.parse(localStorage.getItem('funHebrewWords') || '[]');
-            list.innerHTML = words.length ? '' : '...';
+            list.innerHTML = words.length ? '' : '<p style="text-align:center; color:#999">Список пуст</p>';
             words.slice().reverse().forEach((word, index) => {
                 const actualIndex = words.length - 1 - index;
                 const div = document.createElement('div');
                 div.className = 'vocab-item';
                 const safeWord = word.replace(/'/g, "\\'");
                 div.innerHTML = `
-                    <div onclick="speakText('${safeWord}')" style="cursor:pointer;flex:1">${word}</div>
+                    <div onclick="speakText('${safeWord}')" style="cursor:pointer;flex:1;font-weight:600">${word}</div>
                     <button class="btn-del" onclick="deleteWord(${actualIndex})">✕</button>
                 `;
                 list.appendChild(div);
@@ -211,11 +200,20 @@
             renderVocab();
         }
 
+        function shareApp() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'FunHebrew',
+                    text: 'Учи иврит по актуальным новостям!',
+                    url: window.location.href
+                });
+            } else {
+                alert('Скопируйте ссылку: ' + window.location.href);
+            }
+        }
+
         fetchNews();
         renderVocab();
     </script>
-<div class="footer">
-        Made with ❤️ in Israel
-    </div>
 </body>
 </html>
