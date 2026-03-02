@@ -12,27 +12,29 @@
     <link rel="manifest" href="manifest.json">
     <style>
         :root { 
-            --il-blue: #0038A8; /* Синий цвет флага Израиля */
+            --il-blue: #0038A8; /* Тот самый синий флаг */
             --il-white: #ffffff;
-            --bg: #f5f7fa; 
-            --text-dark: #1a1a1b;
+            --bg: #f8f9fa; 
+            --text-dark: #1c1c1e;
         }
         
         body { 
             background-color: var(--bg); 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
             margin: 0; 
             padding: 15px; 
             direction: rtl; 
             color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .header h1 { 
             text-align: center; 
             font-size: 26px; 
             color: var(--il-blue); 
-            margin: 15px 0 25px 0;
-            text-shadow: 1px 1px 0px var(--il-white);
+            margin: 20px 0;
         }
 
         .card { 
@@ -49,21 +51,19 @@
             line-height: 1.5; 
             font-weight: 700; 
             margin-bottom: 18px; 
-            color: var(--text-dark); 
         }
 
-        /* Кнопки в стиле Израильского флага */
         .actions { 
             display: flex; 
-            gap: 10px; 
+            gap: 8px; 
         }
 
         button { 
             flex: 1; 
             border: 2px solid var(--il-blue); 
             border-radius: 12px; 
-            padding: 12px 5px; 
-            font-size: 14px; 
+            padding: 12px 4px; 
+            font-size: 13px; 
             font-weight: 700; 
             cursor: pointer; 
             transition: all 0.2s;
@@ -72,37 +72,20 @@
             justify-content: center;
         }
 
-        button:active { 
-            transform: translateY(2px); 
-        }
+        button:active { transform: scale(0.96); }
 
-        /* Кнопка Слушать - Белая с синим текстом */
-        .btn-speak { 
+        .btn-speak { background-color: var(--il-white); color: var(--il-blue); }
+        .btn-trans { background-color: var(--il-blue); color: var(--il-white); }
+        
+        /* Кнопка сохранить теперь со сплошной рамкой */
+        .btn-save { 
             background-color: var(--il-white); 
             color: var(--il-blue); 
+            border-style: solid; 
         }
 
-        /* Кнопка Перевод - Синяя с белым текстом */
-        .btn-trans { 
-            background-color: var(--il-blue); 
-            color: var(--il-white); 
-        }
-
-        /* Кнопка Сохранить - Контурная */
-        .btn-save { 
-            background-color: transparent; 
-            color: var(--il-blue);
-            border-style: dashed;
-        }
-
-        /* Стиль для словаря */
-        #my-vocabulary h3 {
-            color: var(--il-blue);
-            border-bottom: 2px solid var(--il-blue);
-            padding-bottom: 5px;
-            display: inline-block;
-        }
-
+        #my-vocabulary { flex-grow: 1; margin-top: 30px; }
+        
         .vocab-item { 
             background: var(--il-white); 
             padding: 15px; 
@@ -112,15 +95,16 @@
             justify-content: space-between; 
             align-items: center;
             border-right: 5px solid var(--il-blue);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        .btn-del { 
-            border: none;
-            color: #ff3b30; 
-            font-size: 18px; 
-            width: auto; 
-            background: none;
+        .btn-del { border: none; color: #ff3b30; background: none; font-size: 18px; }
+
+        /* Подпись внизу */
+        .footer {
+            text-align: center;
+            padding: 30px 0 20px 0;
+            color: #8e8e93;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -230,5 +214,8 @@
         fetchNews();
         renderVocab();
     </script>
-</body>
+<div class="footer">
+        Made with ❤️ in Israel
+    </div>
+    /body>
 </html>
