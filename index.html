@@ -11,22 +11,117 @@
     <title>FunHebrew</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        :root { --primary: #007AFF; --bg: #f2f2f7; --card: #ffffff; --accent: #FF9500; }
-        body { background-color: var(--bg); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; direction: rtl; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { font-size: 32px; color: var(--primary); margin: 0; }
-        .lang-selector { text-align: center; margin-bottom: 20px; }
-        select { padding: 8px; border-radius: 10px; border: 1px solid #ccc; font-size: 16px; }
-        .card { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .headline { font-size: 19px; font-weight: 700; margin-bottom: 15px; color: #000; }
-        .actions { display: flex; gap: 8px; }
-        button { flex: 1; border: none; border-radius: 12px; padding: 12px 5px; font-weight: 600; cursor: pointer; }
-        .btn-speak { background: #E5F1FF; color: var(--primary); }
-        .btn-trans { background: #34C759; color: white; }
-        .btn-save { background: var(--accent); color: white; }
-        #my-vocabulary { margin-top: 30px; }
-        .vocab-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; border-right: 4px solid var(--accent); align-items: center; }
-        .btn-del { background: none; color: #FF3B30; font-size: 18px; width: 40px; }
+        :root { 
+            --il-blue: #0038A8; /* Синий цвет флага Израиля */
+            --il-white: #ffffff;
+            --bg: #f5f7fa; 
+            --text-dark: #1a1a1b;
+        }
+        
+        body { 
+            background-color: var(--bg); 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            margin: 0; 
+            padding: 15px; 
+            direction: rtl; 
+            color: var(--text-dark);
+        }
+
+        .header h1 { 
+            text-align: center; 
+            font-size: 26px; 
+            color: var(--il-blue); 
+            margin: 15px 0 25px 0;
+            text-shadow: 1px 1px 0px var(--il-white);
+        }
+
+        .card { 
+            background: var(--il-white); 
+            border-radius: 16px; 
+            padding: 20px; 
+            box-shadow: 0 4px 12px rgba(0, 56, 168, 0.08); 
+            margin-bottom: 16px; 
+            border: 1px solid rgba(0, 56, 168, 0.1);
+        }
+
+        .headline { 
+            font-size: 18px; 
+            line-height: 1.5; 
+            font-weight: 700; 
+            margin-bottom: 18px; 
+            color: var(--text-dark); 
+        }
+
+        /* Кнопки в стиле Израильского флага */
+        .actions { 
+            display: flex; 
+            gap: 10px; 
+        }
+
+        button { 
+            flex: 1; 
+            border: 2px solid var(--il-blue); 
+            border-radius: 12px; 
+            padding: 12px 5px; 
+            font-size: 14px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:active { 
+            transform: translateY(2px); 
+        }
+
+        /* Кнопка Слушать - Белая с синим текстом */
+        .btn-speak { 
+            background-color: var(--il-white); 
+            color: var(--il-blue); 
+        }
+
+        /* Кнопка Перевод - Синяя с белым текстом */
+        .btn-trans { 
+            background-color: var(--il-blue); 
+            color: var(--il-white); 
+        }
+
+        /* Кнопка Сохранить - Контурная */
+        .btn-save { 
+            background-color: transparent; 
+            color: var(--il-blue);
+            border-style: dashed;
+        }
+
+        /* Стиль для словаря */
+        #my-vocabulary h3 {
+            color: var(--il-blue);
+            border-bottom: 2px solid var(--il-blue);
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        .vocab-item { 
+            background: var(--il-white); 
+            padding: 15px; 
+            border-radius: 12px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-right: 5px solid var(--il-blue);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .btn-del { 
+            border: none;
+            color: #ff3b30; 
+            font-size: 18px; 
+            width: auto; 
+            background: none;
+        }
     </style>
 </head>
 <body>
