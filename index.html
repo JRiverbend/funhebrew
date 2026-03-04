@@ -7,101 +7,34 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="icon.png">
     <title>FunHebrew</title>
-    <link rel="manifest" href="manifest.json">
     <style>
-        :root { 
-            --il-blue: #0038A8; 
-            --il-white: #ffffff;
-            --bg: #f8f9fa; 
-            --text-dark: #1c1c1e;
-        }
-        
-        body { 
-            background-color: var(--bg); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
-            margin: 0; padding: 15px; direction: rtl; color: var(--text-dark);
-            display: flex; flex-direction: column; min-height: 100vh;
-        }
-
-        /* Твои настройки шапки */
-        .header-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center; 
-            margin-bottom: 25px;
-            padding: 10px 5px;
-        }
-
-        .header-container h1 { 
-            font-size: 32px; 
-            color: var(--il-blue); 
-            margin: 0 0 8px 0; 
-            font-weight: 800;
-            text-align: center;
-        }
-
-        select { 
-            padding: 6px 10px; 
-            border-radius: 8px; 
-            border: 1.5px solid var(--il-blue); 
-            font-size: 14px; 
-            font-weight: 600;
-            background: var(--il-white);
-            color: var(--il-blue);
-            width: 100px; 
-            cursor: pointer;
-            outline: none;
-        }
-
-        .card { 
-            background: var(--il-white); border-radius: 16px; padding: 20px; 
-            box-shadow: 0 4px 12px rgba(0, 56, 168, 0.08); margin-bottom: 16px; 
-            border: 1px solid rgba(0, 56, 168, 0.1);
-        }
-
+        :root { --il-blue: #0038A8; --il-white: #ffffff; --bg: #f8f9fa; --text-dark: #1c1c1e; }
+        body { background-color: var(--bg); font-family: -apple-system, sans-serif; margin: 0; padding: 15px; direction: rtl; color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
+        .header-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; padding: 10px 5px; }
+        .header-container h1 { font-size: 32px; color: var(--il-blue); margin: 0 0 8px 0; font-weight: 800; text-align: center; }
+        select { padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--il-blue); font-size: 14px; background: var(--il-white); color: var(--il-blue); width: 100px; outline: none; }
+        .card { background: var(--il-white); border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0, 56, 168, 0.08); margin-bottom: 16px; border: 1px solid rgba(0, 56, 168, 0.1); }
         .headline { font-size: 18px; line-height: 1.5; font-weight: 700; margin-bottom: 18px; text-align: right; }
-
         .actions { display: flex; gap: 8px; }
-        button { 
-            flex: 1; border: 2px solid var(--il-blue); border-radius: 12px; 
-            padding: 12px 4px; font-size: 13px; font-weight: 700; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center;
-        }
+        button { flex: 1; border: 2px solid var(--il-blue); border-radius: 12px; padding: 12px 4px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         button:active { transform: scale(0.96); }
-
         .btn-speak { background: var(--il-white); color: var(--il-blue); }
         .btn-trans { background: var(--il-blue); color: var(--il-white); }
         .btn-save { background: var(--il-white); color: var(--il-blue); border-style: solid; }
-
-        /* Обновленный стиль словаря для отображения перевода */
         #my-vocabulary { flex-grow: 1; margin-top: 30px; }
-        #vocab-title { color: var(--il-blue); text-align: center; margin-bottom: 15px; font-size: 22px; }
-        
-        .vocab-item { 
-            background: var(--il-white); padding: 15px; border-radius: 12px; 
-            margin-bottom: 10px; display: flex; flex-direction: column;
-            border-right: 5px solid var(--il-blue);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            position: relative;
-        }
-
+        .vocab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .vocab-header h3 { color: var(--il-blue); margin: 0; font-size: 22px; }
+        .btn-export { background: none; border: 1.5px solid var(--il-blue); color: var(--il-blue); font-size: 12px; padding: 4px 8px; border-radius: 8px; width: auto; flex: none; }
+        .vocab-item { background: var(--il-white); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; border-right: 5px solid var(--il-blue); box-shadow: 0 2px 6px rgba(0,0,0,0.05); position: relative; }
         .vocab-he { font-weight: 700; font-size: 17px; margin-bottom: 4px; text-align: right; cursor: pointer; color: var(--il-blue); }
         .vocab-tr { font-size: 14px; color: #555; text-align: right; font-style: italic; }
-
         .btn-del { position: absolute; left: 10px; top: 15px; border: none; color: #ff3b30; background: none; font-size: 18px; cursor: pointer; }
-
         .share-section { text-align: center; margin-top: 30px; }
-        .btn-share { 
-            background: var(--il-blue); color: white; border: none; 
-            padding: 15px 30px; border-radius: 25px; font-size: 16px; 
-            width: auto; margin: 0 auto; display: inline-flex;
-        }
-
+        .btn-share { background: var(--il-blue); color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; width: auto; margin: 0 auto; display: inline-flex; }
         .footer { text-align: center; padding: 25px 0; color: #8e8e93; font-size: 12px; }
     </style>
 </head>
 <body>
-
     <div class="header-container">
         <h1>חדשות בעברית</h1>
         <select id="langSelect" onchange="changeLang()">
@@ -111,26 +44,22 @@
             <option value="am">አማርኛ</option>
         </select>
     </div>
-
     <div id="news-container"></div>
-
     <div id="my-vocabulary">
-        <h3 id="vocab-title">⭐ Мой словарь</h3>
+        <div class="vocab-header">
+            <h3 id="vocab-title">⭐ Мой словарь</h3>
+            <button class="btn-export" id="exportBtn" onclick="exportVocab()">📋 Копировать всё</button>
+        </div>
         <div id="vocab-list"></div>
     </div>
-
-    <div class="share-section">
-        <button class="btn-share" onclick="shareApp()">🔗 Поделиться приложением</button>
-    </div>
-
+    <div class="share-section"><button class="btn-share" onclick="shareApp()">🔗 Поделиться приложением</button></div>
     <div class="footer">Made with ❤️ in Israel</div>
-
     <script>
         const translations = {
-            ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь", share: "🔗 Поделиться", empty: "Список пуст", prompt: "Введите перевод этой фразы:" },
-            en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary", share: "🔗 Share", empty: "List is empty", prompt: "Enter translation for this phrase:" },
-            fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico", share: "🔗 Partager", empty: "Liste vide", prompt: "Entrez la traduction:" },
-            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት", share: "🔗 አጋра", empty: "ዝርዝሩ ባዶ ነው", prompt: "የትርጉም ጽሑፉን ያስገቡ:" }
+            ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь", share: "🔗 Поделиться", empty: "Список пуст", prompt: "Введите перевод этой фразы:", copy: "📋 Копировать всё", copied: "✅ Скопировано в буфер!" },
+            en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary", share: "🔗 Share", empty: "List is empty", prompt: "Enter translation:", copy: "📋 Export all", copied: "✅ Copied to clipboard!" },
+            fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico", share: "🔗 Partager", empty: "Liste vide", prompt: "Entrez la traduction:", copy: "📋 Tout copier", copied: "✅ Copié!" },
+            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት", share: "🔗 አጋራ", empty: "ዝርዝሩ ባዶ ነው", prompt: "የትርጉም ጽሑፉን ያስገቡ:", copy: "📋 ሁሉንም ቅዳ", copied: "✅ ተቀድቷል!" }
         };
 
         let currentLang = localStorage.getItem('funLang') || 'ru';
@@ -152,14 +81,7 @@
                 data.items.slice(0, 5).forEach((item, index) => {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.innerHTML = `
-                        <div class="headline" id="head-${index}">${item.title}</div>
-                        <div class="actions">
-                            <button class="btn-speak" onclick="speakFromId('head-${index}')">${translations[currentLang].speak}</button>
-                            <button class="btn-trans" onclick="openTranslate('${index}')">${translations[currentLang].trans}</button>
-                            <button class="btn-save" onclick="saveWithTranslation('${index}')">${translations[currentLang].save}</button>
-                        </div>
-                    `;
+                    card.innerHTML = `<div class="headline" id="head-${index}">${item.title}</div><div class="actions"><button class="btn-speak" onclick="speakFromId('head-${index}')">${translations[currentLang].speak}</button><button class="btn-trans" onclick="openTranslate('${index}')">${translations[currentLang].trans}</button><button class="btn-save" onclick="saveWithTranslation('${index}')">${translations[currentLang].save}</button></div>`;
                     container.appendChild(card);
                 });
             } catch (e) { console.error(e); }
@@ -181,7 +103,6 @@
         function saveWithTranslation(id) {
             const hebrewText = document.getElementById('head-' + id).innerText;
             const trText = prompt(translations[currentLang].prompt);
-            
             if (trText) {
                 let words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
                 words.push({ he: hebrewText, tr: trText });
@@ -192,19 +113,15 @@
 
         function renderVocab() {
             document.getElementById('vocab-title').innerText = translations[currentLang].vocab;
+            document.getElementById('exportBtn').innerText = translations[currentLang].copy;
             const list = document.getElementById('vocab-list');
             const words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
             list.innerHTML = words.length ? '' : `<p style="text-align:center; color:#999">${translations[currentLang].empty}</p>`;
-            
             words.slice().reverse().forEach((item, index) => {
                 const actualIndex = words.length - 1 - index;
                 const div = document.createElement('div');
                 div.className = 'vocab-item';
-                div.innerHTML = `
-                    <div class="vocab-he" onclick="speakText('${item.he.replace(/'/g, "\\'")}')">${item.he}</div>
-                    <div class="vocab-tr">${item.tr}</div>
-                    <button class="btn-del" onclick="deleteWord(${actualIndex})">✕</button>
-                `;
+                div.innerHTML = `<div class="vocab-he" onclick="speakText('${item.he.replace(/'/g, "\\'")}')">${item.he}</div><div class="vocab-tr">${item.tr}</div><button class="btn-del" onclick="deleteWord(${actualIndex})">✕</button>`;
                 list.appendChild(div);
             });
         }
@@ -214,6 +131,18 @@
             words.splice(index, 1);
             localStorage.setItem('funHebrewFullVocab', JSON.stringify(words));
             renderVocab();
+        }
+
+        function exportVocab() {
+            const words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
+            if (words.length === 0) return;
+            const textToCopy = words.map(item => `${item.he} — ${item.tr}`).join('\n');
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const btn = document.getElementById('exportBtn');
+                const originalText = btn.innerText;
+                btn.innerText = translations[currentLang].copied;
+                setTimeout(() => btn.innerText = originalText, 2000);
+            });
         }
 
         function shareApp() {
