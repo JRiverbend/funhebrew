@@ -23,23 +23,23 @@
             display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* Шапка с названием и выбором языка */
+        /* Твои настройки шапки */
         .header-container {
             display: flex;
             flex-direction: column;
-            align-items: center; /* Выравнивание по правому краю (в RTL) */
+            align-items: center; 
             margin-bottom: 25px;
             padding: 10px 5px;
         }
 
         .header-container h1 { 
-            font-size: 32px; /* Увеличили до 32 */
+            font-size: 32px; 
             color: var(--il-blue); 
             margin: 0 0 8px 0; 
             font-weight: 800;
+            text-align: center;
         }
 
-        /* Компактный выбор языка в правом нижнем углу шапки */
         select { 
             padding: 6px 10px; 
             border-radius: 8px; 
@@ -48,7 +48,6 @@
             font-weight: 600;
             background: var(--il-white);
             color: var(--il-blue);
-            /* Размер 3/4 от кнопок действий (которые обычно ~100-120px) */
             width: 100px; 
             cursor: pointer;
             outline: none;
@@ -74,17 +73,22 @@
         .btn-trans { background: var(--il-blue); color: var(--il-white); }
         .btn-save { background: var(--il-white); color: var(--il-blue); border-style: solid; }
 
+        /* Обновленный стиль словаря для отображения перевода */
         #my-vocabulary { flex-grow: 1; margin-top: 30px; }
-        #vocab-title { color: var(--il-blue); text-align: right; margin-bottom: 15px; font-size: 20px; }
+        #vocab-title { color: var(--il-blue); text-align: center; margin-bottom: 15px; font-size: 22px; }
         
         .vocab-item { 
             background: var(--il-white); padding: 15px; border-radius: 12px; 
-            margin-bottom: 10px; display: flex; justify-content: space-between; 
+            margin-bottom: 10px; display: flex; flex-direction: column;
             border-right: 5px solid var(--il-blue);
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            position: relative;
         }
 
-        .btn-del { border: none; color: #ff3b30; background: none; font-size: 18px; flex: none; width: auto; }
+        .vocab-he { font-weight: 700; font-size: 17px; margin-bottom: 4px; text-align: right; cursor: pointer; color: var(--il-blue); }
+        .vocab-tr { font-size: 14px; color: #555; text-align: right; font-style: italic; }
+
+        .btn-del { position: absolute; left: 10px; top: 15px; border: none; color: #ff3b30; background: none; font-size: 18px; cursor: pointer; }
 
         .share-section { text-align: center; margin-top: 30px; }
         .btn-share { 
@@ -119,16 +123,14 @@
         <button class="btn-share" onclick="shareApp()">🔗 Поделиться приложением</button>
     </div>
 
-    <div class="footer">
-        Made with ❤️ in Israel
-    </div>
+    <div class="footer">Made with ❤️ in Israel</div>
 
     <script>
         const translations = {
-            ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь", share: "🔗 Поделиться", empty: "Список пуст" },
-            en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary", share: "🔗 Share", empty: "List is empty" },
-            fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico", share: "🔗 Partager", empty: "Liste vide" },
-            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት", share: "🔗 አጋራ", empty: "ዝርዝሩ ባዶ ነው" }
+            ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь", share: "🔗 Поделиться", empty: "Список пуст", prompt: "Введите перевод этой фразы:" },
+            en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary", share: "🔗 Share", empty: "List is empty", prompt: "Enter translation for this phrase:" },
+            fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico", share: "🔗 Partager", empty: "Liste vide", prompt: "Entrez la traduction:" },
+            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት", share: "🔗 አጋра", empty: "ዝርዝሩ ባዶ ነው", prompt: "የትርጉም ጽሑፉን ያስገቡ:" }
         };
 
         let currentLang = localStorage.getItem('funLang') || 'ru';
@@ -143,9 +145,7 @@
 
         async function fetchNews() {
             try {
-                const RSS_URL = 'https://www.ynet.co.il/Integration/StoryRss2.xml';
-                const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
-                const response = await fetch(API_URL);
+                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://www.ynet.co.il/Integration/StoryRss2.xml')}`);
                 const data = await response.json();
                 const container = document.getElementById('news-container');
                 container.innerHTML = '';
@@ -156,8 +156,8 @@
                         <div class="headline" id="head-${index}">${item.title}</div>
                         <div class="actions">
                             <button class="btn-speak" onclick="speakFromId('head-${index}')">${translations[currentLang].speak}</button>
-                            <button class="btn-trans" onclick="translateFromId('head-${index}')">${translations[currentLang].trans}</button>
-                            <button class="btn-save" onclick="saveWord(${index})">${translations[currentLang].save}</button>
+                            <button class="btn-trans" onclick="openTranslate('${index}')">${translations[currentLang].trans}</button>
+                            <button class="btn-save" onclick="saveWithTranslation('${index}')">${translations[currentLang].save}</button>
                         </div>
                     `;
                     container.appendChild(card);
@@ -173,34 +173,36 @@
         }
         function speakFromId(id) { speakText(document.getElementById(id).innerText); }
         
-        function translateFromId(id) { 
-            const text = document.getElementById(id).innerText;
-            window.open(`https://translate.google.com/?sl=iw&tl=${currentLang}&text=${encodeURIComponent(text)}&op=translate`, '_blank'); 
+        function openTranslate(id) {
+            const text = document.getElementById('head-' + id).innerText;
+            window.open(`https://translate.google.com/?sl=iw&tl=${currentLang}&text=${encodeURIComponent(text)}&op=translate`, '_blank');
         }
 
-        function saveWord(id) {
-            const text = document.getElementById('head-' + id).innerText;
-            let words = JSON.parse(localStorage.getItem('funHebrewWords') || '[]');
-            if (!words.includes(text)) {
-                words.push(text);
-                localStorage.setItem('funHebrewWords', JSON.stringify(words));
+        function saveWithTranslation(id) {
+            const hebrewText = document.getElementById('head-' + id).innerText;
+            const trText = prompt(translations[currentLang].prompt);
+            
+            if (trText) {
+                let words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
+                words.push({ he: hebrewText, tr: trText });
+                localStorage.setItem('funHebrewFullVocab', JSON.stringify(words));
                 renderVocab();
             }
         }
 
         function renderVocab() {
             document.getElementById('vocab-title').innerText = translations[currentLang].vocab;
-            document.querySelector('.btn-share').innerText = translations[currentLang].share;
             const list = document.getElementById('vocab-list');
-            const words = JSON.parse(localStorage.getItem('funHebrewWords') || '[]');
+            const words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
             list.innerHTML = words.length ? '' : `<p style="text-align:center; color:#999">${translations[currentLang].empty}</p>`;
-            words.slice().reverse().forEach((word, index) => {
+            
+            words.slice().reverse().forEach((item, index) => {
                 const actualIndex = words.length - 1 - index;
                 const div = document.createElement('div');
                 div.className = 'vocab-item';
-                const safeWord = word.replace(/'/g, "\\'");
                 div.innerHTML = `
-                    <div onclick="speakText('${safeWord}')" style="cursor:pointer;flex:1;font-weight:600;text-align:right;">${word}</div>
+                    <div class="vocab-he" onclick="speakText('${item.he.replace(/'/g, "\\'")}')">${item.he}</div>
+                    <div class="vocab-tr">${item.tr}</div>
                     <button class="btn-del" onclick="deleteWord(${actualIndex})">✕</button>
                 `;
                 list.appendChild(div);
@@ -208,21 +210,15 @@
         }
 
         function deleteWord(index) {
-            let words = JSON.parse(localStorage.getItem('funHebrewWords') || '[]');
+            let words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
             words.splice(index, 1);
-            localStorage.setItem('funHebrewWords', JSON.stringify(words));
+            localStorage.setItem('funHebrewFullVocab', JSON.stringify(words));
             renderVocab();
         }
 
         function shareApp() {
             if (navigator.share) {
-                navigator.share({
-                    title: 'FunHebrew',
-                    text: 'Учи иврит по актуальным новостям!',
-                    url: window.location.href
-                });
-            } else {
-                alert('Скопируйте ссылку: ' + window.location.href);
+                navigator.share({ title: 'FunHebrew', url: window.location.href });
             }
         }
 
