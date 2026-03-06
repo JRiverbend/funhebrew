@@ -61,7 +61,7 @@
             ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь", share: "🔗 Поделиться", empty: "Список пуст", prompt: "Введите перевод этой фразы:", copy: "📋 Копировать всё", copied: "✅ Скопировано!" },
             en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary", share: "🔗 Share", empty: "List is empty", prompt: "Enter translation:", copy: "📋 Export all", copied: "✅ Copied!" },
             fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico", share: "🔗 Partager", empty: "Liste vide", prompt: "Entrez la traduction:", copy: "📋 Tout copier", copied: "✅ Copié!" },
-            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት", share: "🔗 አጋራ", empty: "ዝርዝሩ ባዶ ነው", prompt: "የትርጉም ጽሑፉን ያስገቡ:", copy: "📋 ሁሉንም ቅዳ", copied: "✅ ተቀድቷል!" }
+            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥна", vocab: "⭐ የእኔ मዝገበ ቃላት", share: "🔗 አጋራ", empty: "ዝርዝሩ ባዶ ነው", prompt: "የትርጉም ጽሑፉን ያስገቡ:", copy: "📋 ሁሉንም ቅዳ", copied: "✅ ተቀድቷል!" }
         };
 
         let currentLang = localStorage.getItem('funLang') || 'ru';
@@ -83,23 +83,24 @@
             const container = document.getElementById('news-container');
             container.innerHTML = '<p style="text-align:center; padding: 20px;">טוען חדשות... (Загрузка)</p>';
             
-            try {
-                const targetUrl = 'https://hadshon.education.gov.il/wp-json/wp/v2/posts?per_page=5';
-                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
-                const data = await response.json();
-                const items = JSON.parse(data.contents);
-                
-                container.innerHTML = '';
-                items.forEach((item, index) => {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = item.title.rendered;
-                    const cleanTitle = tempDiv.innerText;
-                    const displayDate = formatDate(item.date);
+            const targetUrl = 'https://hadshon.education.gov.il/wp-json/wp/v2/posts?per_page=5';
+            
+            // Пробуем два разных прокси для надежности
+            const proxies = [
+                `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
+                `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`
+            ];
 
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <span class="news-date">${displayDate}</span>
-                        <div class="headline" id="head-${index}">${cleanTitle}</div>
-                        <div class="actions">
-                            <button class="btn-speak" onclick="speakFromId('head-${index}')">${translations[currentLang].
+            for (let proxy of proxies) {
+                try {
+                    const response = await fetch(proxy);
+                    if (!response.ok) continue;
+                    
+                    const data = await response.json();
+                    // AllOrigins возвращает данные в contents, corsproxy.io возвращает напрямую
+                    const content = data.contents ? JSON.parse(data.contents) : data;
+
+                    if (Array.isArray(content) && content.length > 0) {
+                        renderCards(content);
+                        return; // Успешно загрузили, выходим из цикла
+                    }
