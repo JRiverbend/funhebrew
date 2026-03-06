@@ -10,18 +10,50 @@
     <style>
         :root { --il-blue: #0038A8; --il-white: #ffffff; --bg: #f8f9fa; --text-dark: #1c1c1e; }
         body { background-color: var(--bg); font-family: -apple-system, sans-serif; margin: 0; padding: 15px; direction: rtl; color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
-        .header-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; padding: 10px 5px; }
-        .header-container h1 { font-size: 32px; color: var(--il-blue); margin: 0 0 8px 0; font-weight: 800; text-align: center; }
-        select { padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--il-blue); font-size: 14px; background: var(--il-white); color: var(--il-blue); width: 100px; outline: none; }
+        
+        /* Заголовок по центру и крупно */
+        .header-container { 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin-bottom: 25px; 
+            padding: 20px 5px 45px 5px; 
+        }
+        .header-container h1 { 
+            font-size: 38px; 
+            color: var(--il-blue); 
+            margin: 0; 
+            font-weight: 800; 
+            text-align: center; 
+        }
+
+        /* Кнопка выбора языка в правом нижнем углу шапки */
+        select { 
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            padding: 6px 10px; 
+            border-radius: 8px; 
+            border: 1.5px solid var(--il-blue); 
+            font-size: 14px; 
+            background: var(--il-white); 
+            color: var(--il-blue); 
+            outline: none; 
+            width: auto;
+        }
+
         .card { background: var(--il-white); border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0, 56, 168, 0.08); margin-bottom: 16px; border: 1px solid rgba(0, 56, 168, 0.1); position: relative; }
         .news-date { font-size: 11px; color: #8e8e93; margin-bottom: 8px; font-weight: 500; display: block; text-align: right; }
-        .headline { font-size: 18px; line-height: 1.6; font-weight: 700; margin-bottom: 18px; text-align: right; }
+        .headline { font-size: 19px; line-height: 1.6; font-weight: 700; margin-bottom: 18px; text-align: right; }
+        
         .actions { display: flex; gap: 8px; }
         button { flex: 1; border: 2px solid var(--il-blue); border-radius: 12px; padding: 12px 4px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         button:active { transform: scale(0.96); }
         .btn-speak { background: var(--il-white); color: var(--il-blue); }
         .btn-trans { background: var(--il-blue); color: var(--il-white); }
         .btn-save { background: var(--il-white); color: var(--il-blue); border-style: solid; }
+        
         #my-vocabulary { flex-grow: 1; margin-top: 30px; }
         .vocab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .vocab-header h3 { color: var(--il-blue); margin: 0; font-size: 22px; }
@@ -45,7 +77,9 @@
             <option value="am">አማርኛ</option>
         </select>
     </div>
+    
     <div id="news-container"></div>
+
     <div id="my-vocabulary">
         <div class="vocab-header">
             <h3 id="vocab-title">⭐ Мой словарь</h3>
@@ -61,7 +95,7 @@
             ru: { speak: "🔊 Слушать", trans: "🌐 Перевод", save: "⭐ Учить", vocab: "⭐ Мой словарь", share: "🔗 Поделиться", empty: "Список пуст", prompt: "Введите перевод этой фразы:", copy: "📋 Копировать всё", copied: "✅ Скопировано!" },
             en: { speak: "🔊 Listen", trans: "🌐 Translate", save: "⭐ Save", vocab: "⭐ My Vocabulary", share: "🔗 Share", empty: "List is empty", prompt: "Enter translation:", copy: "📋 Export all", copied: "✅ Copied!" },
             fr: { speak: "🔊 Écouter", trans: "🌐 Traduire", save: "⭐ Apprendre", vocab: "⭐ Mon dico", share: "🔗 Partager", empty: "Liste vide", prompt: "Entrez la traduction:", copy: "📋 Tout copier", copied: "✅ Copié!" },
-            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥна", vocab: "⭐ የእኔ मዝገበ ቃላት", share: "🔗 አጋራ", empty: "ዝርዝሩ ባዶ ነው", prompt: "የትርጉም ጽሑፉን ያስገቡ:", copy: "📋 ሁሉንም ቅዳ", copied: "✅ ተቀድቷል!" }
+            am: { speak: "🔊 አዳምጥ", trans: "🌐 ተርጉም", save: "⭐ አጥና", vocab: "⭐ የእኔ መዝገበ ቃላት", share: "🔗 አጋራ", empty: "ዝርዝሩ ባዶ ነው", prompt: "የትርጉም ጽሑፉን ያስገቡ:", copy: "📋 ሁሉንም ቅዳ", copied: "✅ ተቀድቷል!" }
         };
 
         let currentLang = localStorage.getItem('funLang') || 'ru';
@@ -74,33 +108,117 @@
             renderVocab();
         }
 
-        function formatDate(isoString) {
-            const date = new Date(isoString);
-            return date.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        }
-
         async function fetchNews() {
             const container = document.getElementById('news-container');
             container.innerHTML = '<p style="text-align:center; padding: 20px;">טוען חדשות... (Загрузка)</p>';
             
-            const targetUrl = 'https://hadshon.education.gov.il/wp-json/wp/v2/posts?per_page=5';
+            try {
+                // Используем RSS фид Hadshon через надежный агрегатор rss2json
+                const rssUrl = 'https://hadshon.education.gov.il/feed/';
+                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&api_key=00000000000000000000000000000000`);
+                const data = await response.json();
+
+                if (data.status === 'ok') {
+                    container.innerHTML = '';
+                    data.items.slice(0, 5).forEach((item, index) => {
+                        // Форматируем дату из RSS
+                        const dateObj = new Date(item.pubDate);
+                        const displayDate = dateObj.toLocaleDateString('he-IL');
+
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `
+                            <span class="news-date">${displayDate}</span>
+                            <div class="headline" id="head-${index}">${item.title}</div>
+                            <div class="actions">
+                                <button class="btn-speak" onclick="speakFromId('head-${index}')">${translations[currentLang].speak}</button>
+                                <button class="btn-trans" onclick="openTranslate('${index}')">${translations[currentLang].trans}</button>
+                                <button class="btn-save" onclick="saveWithTranslation('${index}')">${translations[currentLang].save}</button>
+                            </div>`;
+                        container.appendChild(card);
+                    });
+                } else {
+                    throw new Error("RSS Error");
+                }
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<p style="text-align:center; color:red; padding: 20px;">שגיאה בטעינה. בדוק חיבור אינטרנט.</p>';
+            }
+        }
+
+        function speakText(text) {
+            window.speechSynthesis.cancel();
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'he-IL';
+            window.speechSynthesis.speak(ut);
+        }
+
+        function speakFromId(id) { speakText(document.getElementById(id).innerText); }
+        
+        function openTranslate(id) {
+            const text = document.getElementById('head-' + id).innerText;
+            // Очистка от огласовок для Google Translate
+            const cleanText = text.replace(/[\u0591-\u05C7]/g, "");
+            window.open(`https://translate.google.com/?sl=iw&tl=${currentLang}&text=${encodeURIComponent(cleanText)}&op=translate`, '_blank');
+        }
+
+        function saveWithTranslation(id) {
+            const hebrewText = document.getElementById('head-' + id).innerText;
+            const trText = prompt(translations[currentLang].prompt);
+            if (trText) {
+                let words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
+                words.push({ he: hebrewText, tr: trText });
+                localStorage.setItem('funHebrewFullVocab', JSON.stringify(words));
+                renderVocab();
+            }
+        }
+
+        function renderVocab() {
+            document.getElementById('vocab-title').innerText = translations[currentLang].vocab;
+            document.getElementById('exportBtn').innerText = translations[currentLang].copy;
+            const list = document.getElementById('vocab-list');
+            const words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
+            list.innerHTML = words.length ? '' : `<p style="text-align:center; color:#999">${translations[currentLang].empty}</p>`;
             
-            // Пробуем два разных прокси для надежности
-            const proxies = [
-                `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
-                `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`
-            ];
+            words.slice().reverse().forEach((item, index) => {
+                const actualIndex = words.length - 1 - index;
+                const div = document.createElement('div');
+                div.className = 'vocab-item';
+                div.innerHTML = `
+                    <div class="vocab-he" onclick="speakText('${item.he.replace(/'/g, "\\'")}')">${item.he}</div>
+                    <div class="vocab-tr">${item.tr}</div>
+                    <button class="btn-del" onclick="deleteWord(${actualIndex})">✕</button>`;
+                list.appendChild(div);
+            });
+        }
 
-            for (let proxy of proxies) {
-                try {
-                    const response = await fetch(proxy);
-                    if (!response.ok) continue;
-                    
-                    const data = await response.json();
-                    // AllOrigins возвращает данные в contents, corsproxy.io возвращает напрямую
-                    const content = data.contents ? JSON.parse(data.contents) : data;
+        function deleteWord(index) {
+            let words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
+            words.splice(index, 1);
+            localStorage.setItem('funHebrewFullVocab', JSON.stringify(words));
+            renderVocab();
+        }
 
-                    if (Array.isArray(content) && content.length > 0) {
-                        renderCards(content);
-                        return; // Успешно загрузили, выходим из цикла
-                    }
+        function exportVocab() {
+            const words = JSON.parse(localStorage.getItem('funHebrewFullVocab') || '[]');
+            if (words.length === 0) return;
+            const textToCopy = words.map(item => `${item.he} — ${item.tr}`).join('\n');
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const btn = document.getElementById('exportBtn');
+                const originalText = btn.innerText;
+                btn.innerText = translations[currentLang].copied;
+                setTimeout(() => btn.innerText = originalText, 2000);
+            });
+        }
+
+        function shareApp() {
+            if (navigator.share) {
+                navigator.share({ title: 'FunHebrew', url: window.location.href });
+            }
+        }
+
+        fetchNews();
+        renderVocab();
+    </script>
+</body>
+</html>
